@@ -5,6 +5,7 @@ from .reply import *
 from .secrets import *
 
 DEFAULT_REPLY = "Sorry, I don't understand"
+ERROR_REPLY = "Sorry, I experienced error."
 
 
 def get_reply(message):
@@ -20,6 +21,10 @@ def get_reply(message):
 			return DentistsReply().get_reply()
 		elif jsonResponse['intents'][0]['name'] == "getDentistInformation":
 			name = jsonResponse['entities']['dentist:dentist'][0]['body']
-			return DentistReply(name).get_reply()
-	except:
+			return DentistInformationReply(name).get_reply()
+		elif jsonResponse['intents'][0]['name'] == "getDentistAvailableTimeslots":
+			name = jsonResponse['entities']['dentist:dentist'][0]['body']
+			return DentistAvailableTimeslotReply(name).get_reply()
 		return DEFAULT_REPLY
+	except:
+		return ERROR_REPLY

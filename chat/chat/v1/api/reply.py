@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from datetime import date
 
 from http import HTTPStatus
 import requests
@@ -17,8 +18,6 @@ class Reply:
     def get_api_json_response(self):
         """Returns the JSON response by making an API call"""
         response = requests.get(self.url, headers=self.headers)
-        if response.status_code != HTTPStatus.OK:
-            raise response.raise_for_status()
         return response.json()
 
     @abstractmethod
@@ -55,7 +54,7 @@ class DentistsReply(Reply):
         return f'We have {dentistsString}.'
 
 
-class DentistReply(Reply):
+class DentistInformationReply(Reply):
     """A reply to user's request on information about a specific dentist"""
 
     entityName = __qualname__
@@ -68,6 +67,26 @@ class DentistReply(Reply):
     def process_api_json_response(self):
         jsonResponse = self.get_api_json_response()
         if len(jsonResponse) == 0:
-            return f'We do not have {self.name}.'
+            return f'We do not have dentist {self.name}.'
         dentist = jsonResponse[0]
         return f'Dentist {dentist["name"]} works in {dentist["location"]} and specializes in {dentist["specialization"]}.'
+
+
+class DentistAvailableTimeslotReply(Reply):
+    """A reply to user's request on the available timeslot about a specific dentist"""
+
+    entityName = __qualname__
+
+    def __init__(self, name):
+        super().__init__()
+        self.name = name
+        today = date.today().strftime("%Y-%m-%d")
+        self.url = f'http://0.0.0.0:8081/api/timeslot/?dentist={name}&date={today}&status=available'
+
+    def process_api_json_response(self):
+        jsonResponse = self.get_api_json_response()
+        if len(jsonResponse) == 0:
+            return f'We do not have dentist {self.name}.'
+        timeslots = [timeslot['startTime'] for timeslot in jsonResponse]
+        timeslotsString = '%s' % ', '.join(map(str, timeslots))
+        return f'Dentist {self.name} is available today for 1-hour timeslots those start on {timeslotsString} o\'clock.'
