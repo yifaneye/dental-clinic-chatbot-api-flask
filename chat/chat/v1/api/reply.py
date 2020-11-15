@@ -5,6 +5,10 @@ from http import HTTPStatus
 import requests
 
 
+def list_to_string(_list):
+    return f"{', '.join(map(str, _list))}"
+
+
 class Reply:
     """A reply to user's request"""
 
@@ -50,7 +54,7 @@ class DentistsReply(Reply):
     def process_api_json_response(self):
         jsonResponse = self.get_api_json_response()
         dentists = [dentist['name'] for dentist in jsonResponse]
-        dentistsString = '%s' % ', '.join(map(str, dentists))
+        dentistsString = list_to_string(dentists)
         return f'We have {dentistsString}.'
 
 
@@ -88,5 +92,5 @@ class DentistAvailableTimeslotReply(Reply):
         if len(jsonResponse) == 0:
             return f'We do not have dentist {self.name}.'
         timeslots = [timeslot['startTime'] for timeslot in jsonResponse]
-        timeslotsString = '%s' % ', '.join(map(str, timeslots))
+        timeslotsString = list_to_string(timeslots)
         return f'Dentist {self.name} is available today for 1-hour timeslots those start on {timeslotsString} o\'clock.'
