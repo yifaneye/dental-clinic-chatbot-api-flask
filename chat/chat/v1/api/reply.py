@@ -4,6 +4,9 @@ from datetime import date
 from http import HTTPStatus
 import requests
 
+DENTIST_API_BASE_PATH = 'http://0.0.0.0:8083/v1'
+TIMESLOT_API_BASE_PATH = 'http://0.0.0.0:8084/v1'
+
 
 def list_to_string(_list):
     return f"{', '.join(map(str, _list))}"
@@ -49,7 +52,7 @@ class DentistsReply(Reply):
 
     def __init__(self):
         super().__init__()
-        self.url = f'http://0.0.0.0:8082/api/dentist/'
+        self.url = f'{DENTIST_API_BASE_PATH}/dentists'
 
     def process_api_json_response(self):
         jsonResponse = self.get_api_json_response()
@@ -66,7 +69,7 @@ class DentistInformationReply(Reply):
     def __init__(self, name):
         super().__init__()
         self.name = name
-        self.url = f'http://0.0.0.0:8082/api/dentist/?name={name}'
+        self.url = f'{DENTIST_API_BASE_PATH}/dentists?name={name}'
 
     def process_api_json_response(self):
         jsonResponse = self.get_api_json_response()
@@ -85,7 +88,7 @@ class DentistAvailableTimeslotReply(Reply):
         super().__init__()
         self.name = name
         today = date.today().strftime("%Y-%m-%d")
-        self.url = f'http://0.0.0.0:8081/api/timeslot/?dentist={name}&date={today}&status=available'
+        self.url = f'{TIMESLOT_API_BASE_PATH}/timeslots?dentist={name}&date={today}&status=available'
 
     def process_api_json_response(self):
         jsonResponse = self.get_api_json_response()
@@ -107,8 +110,8 @@ class UpdateTimeslotReply(Reply):
         self.action = action
         self.startTime = startTime
         today = date.today().strftime("%Y-%m-%d")
-        self.url = f'http://0.0.0.0:8081/api/timeslot/?dentist={name}&date={today}&startTime={startTime}'
-        self.urlBackup = f'http://0.0.0.0:8081/api/timeslot/?dentist={name}&date={today}'
+        self.url = f'{TIMESLOT_API_BASE_PATH}/timeslots?dentist={name}&date={today}&startTime={startTime}'
+        self.urlBackup = f'{TIMESLOT_API_BASE_PATH}/timeslots?dentist={name}&date={today}'
 
     @staticmethod
     def get_api_json_response_alternative(url):
@@ -134,7 +137,7 @@ class UpdateTimeslotReply(Reply):
                 return f'{standardReply} I suggest with Dentist {self.name}\'s 1-hour timeslot that start on {timeSlotBackup["startTime"]} o\'clock today.'
             return standardReply
         timeslot = jsonResponse[0]
-        url = f'http://0.0.0.0:8081/api/timeslot/{timeslot["id"]}/'
+        url = f'{TIMESLOT_API_BASE_PATH}/{timeslot["id"]}'
         if self.action == 'cancel':
             timeslot['status'] = 'available'
             response = self.patch_api_json_response_alternative(url, data=timeslot)
