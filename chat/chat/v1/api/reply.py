@@ -1,3 +1,4 @@
+import json
 from abc import abstractmethod
 from datetime import date
 
@@ -122,7 +123,9 @@ class UpdateTimeslotReply(Reply):
     @staticmethod
     def patch_api_json_response_alternative(url, data):
         """Returns the JSON response by making an API call"""
-        response = requests.patch(url, data=data)
+        headers = {"content-type": "application/json"}
+        jsonData = json.dumps(data)
+        response = requests.patch(url, jsonData, headers=headers)
         if response.status_code != 200:
             return 'failed to'
         return 'succeed to'
@@ -137,7 +140,7 @@ class UpdateTimeslotReply(Reply):
                 return f'{standardReply} I suggest with Dentist {self.name}\'s 1-hour timeslot that start on {timeSlotBackup["startTime"]} o\'clock today.'
             return standardReply
         timeslot = jsonResponse[0]
-        url = f'{TIMESLOT_API_BASE_PATH}/{timeslot["id"]}'
+        url = f'{TIMESLOT_API_BASE_PATH}/timeslots/{timeslot["id"]}'
         if self.action == 'cancel':
             timeslot['status'] = 'available'
             response = self.patch_api_json_response_alternative(url, data=timeslot)
