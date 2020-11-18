@@ -19,7 +19,7 @@ paths:
       description: Get bot reply
       parameters:
         - name: message
-          in: message
+          in: query
           required: true
           description: Message to the bot
           type: string

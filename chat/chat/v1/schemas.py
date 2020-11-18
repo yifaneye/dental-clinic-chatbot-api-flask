@@ -57,7 +57,7 @@ validators = {
 }
 
 filters = {
-    ('chat', 'GET'): {200: {'headers': None, 'schema': {'type': 'object', 'properties': {'reply': {'type': 'string', 'example': 'Hi', 'description': 'Reply from the bot'}}}}, 400: {'headers': None, 'schema': None}},
+    ('chat', 'GET'): {200: {'headers': None, 'schema': {'type': 'object', 'properties': {'reply': {'type': 'string', 'example': 'Hi', 'description': 'Reply from the bot'}}}}, 400: {'headers': None, 'schema': None}, 500: {'headers': None, 'schema': None}},
 }
 
 scopes = {

@@ -46,6 +46,9 @@
           },
           "400": {
             "description": "Bad request"
+          },
+          "500": {
+            "description": "Server Error"
           }
         },
         "tags": [
