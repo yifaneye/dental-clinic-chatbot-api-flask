@@ -5,8 +5,8 @@ from datetime import date
 from http import HTTPStatus
 import requests
 
-DENTIST_API_BASE_PATH = 'http://dentistAPIService:5001/v1'
-TIMESLOT_API_BASE_PATH = 'http://timeslotAPIService:5002/v1'
+DENTIST_API_BASE_PATH = 'http://dentist:5001/v1'
+TIMESLOT_API_BASE_PATH = 'http://timeslot:5002/v1'
 
 
 def list_to_string(_list):
